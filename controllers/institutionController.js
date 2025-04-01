@@ -10,7 +10,7 @@ const getAllInstitutions = async (req, res) => {
   } catch (error) {
     console.error("Erreur lors de la récupération des institutions:", error);
     return res.status(500).json({
-      error: "Une erreur est survenue lors de la récupération des institutions",
+      error: "Une erreur lors de la récupération des institutions",
     });
   }
 };
