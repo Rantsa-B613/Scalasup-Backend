@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  relationMode = "prisma"
+  schemas  = ["workflow_user"]
+}
+
+model Utilisateur {
+  user_id          String     @id @default(uuid()) @map("user_id")
+  nom             String
+  prenom          String
+  email           String      @unique
+  mot_de_passe    String
+  type_utilisateur TypeUtilisateur
+  date_inscription DateTime   @default(now())
+  statut          String
+
+  // Relations
+  etudiant       Etudiant?    @relation("UtilisateurEtudiant")
+  institution    Institution? @relation("InstitutionAdmin")
+
+  @@schema("workflow_user")
+  @@map("Utilisateur")
+}
+
+model Etudiant {
+  etudiant_id         String  @id @map("etudiant_id")
+  date_naissance      DateTime
+  niveau_etude        String
+  dossier_candidature String
+  statut_inscription  String
+  notifications       String?
+
+  // Relation to Utilisateur
+  utilisateur Utilisateur @relation("UtilisateurEtudiant", fields: [etudiant_id], references: [user_id], map: "fk_etudiant_utilisateur")
+
+  @@schema("workflow_user")
+  @@map("Etudiant")
+}
+
+model Institution {
+  institution_id     String  @id @default(uuid()) @map("institution_id")
+  nom_institution   String
+  adresse           String
+  contact_email     String
+  contact_telephone String
+  description       String?
+  date_creation     DateTime @default(now())
+  admin_id          String   @unique @map("admin_id")
+
+  // Relation to Utilisateur (Admin)
+  admin Utilisateur @relation("InstitutionAdmin", fields: [admin_id], references: [user_id], map: "fk_institution_admin")
+
+  @@schema("workflow_user")
+  @@map("Institution")
+}
+
+model Sponsor {
+  sponsor_id         String  @id @default(uuid()) @map("sponsor_id")
+  nom_sponsor       String
+  logo              String?
+  secteur           String
+  site_web          String?
+  contact_email     String
+  contact_telephone String
+  date_signature_contrat DateTime @default(now())
+
+  @@schema("workflow_user")
+  @@map("Sponsor")
+}
+
+enum TypeUtilisateur {
+  ETUDIANT
+  INSTITUTION
+  SPONSOR
+  ADMINISTRATEUR
+
+  @@schema("workflow_user")
+}
