@@ -8,7 +8,7 @@ const getAllEtudiants = async (req, res) => {
     });
     return res.json(etudiants);
   } catch (error) {
-    console.error("Erreur lors de la récupération des étudiants:", error);
+    console.error("Erreur lors de la récupération des étudiants", error);
     return res.status(500).json({
       error: "Une erreur est survenue lors de la récupération des étudiants",
     });
